@@ -1,8 +1,9 @@
 
 int L1=9,L2=10,L3=11,L4=12;
-int Vel=10,Pasos=30;
+int Vel=10,Pasos=70;
 
 int sensorPin = A0;
+int interruptPin=3;
 float average = 0;
 int led=5;
 int val =0;
@@ -10,42 +11,26 @@ int ena485=2;
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
+
 void setup() {
   
   pinMode(L1, OUTPUT);
   pinMode(L2, OUTPUT);
   pinMode(L3, OUTPUT);
   pinMode(L4, OUTPUT);
-  
- 
-  
+ // pinMode(interruptPin, INPUT_PULLUP);
+//  attachInterrupt(digitalPinToInterrupt(interruptPin), blink(), RISING);
   pinMode(ena485, OUTPUT);
   pinMode(led, OUTPUT);
   pinMode(sensorPin, INPUT);
   digitalWrite(ena485,HIGH);
   digitalWrite(led,HIGH);
   Serial.begin(9600);
-   delay(50);
+  delay(50);
   Serial.println("Impresora 3D");
   delay(50);
   digitalWrite(ena485,LOW);
   digitalWrite(led,LOW);
-  
-   
-  digitalWrite(L1,HIGH);
-  digitalWrite(L2,HIGH);
-  digitalWrite(L3,HIGH);
-  digitalWrite(L4,HIGH);
- 
-  
-  delay(200);
-  
-  
-   
-  digitalWrite(L1,LOW);
-  digitalWrite(L2,LOW);
-  digitalWrite(L3,LOW);
-  digitalWrite(L4,LOW);
   
   
 }
@@ -95,39 +80,37 @@ void comandos(String com){
      
     case 'a':
      
-  digitalWrite(ena485,HIGH);
-  delay(50);
+        digitalWrite(ena485,HIGH);
+        delay(50);
         Serial.println("avanzando paso normal");
-        Avanzar(Pasos,Vel);
+        AvanzarDeDosBobinas(Pasos,Vel);
         Detener();
-       
         break;
+        
     case 'A':
-     
-  digitalWrite(ena485,HIGH);
-  delay(50);
+        digitalWrite(ena485,HIGH);
+        delay(50);
         Serial.println("avanzando paso intercalado");
         AvanzarPasoIntermedio(Pasos,Vel);
         Detener();
-       
-        break;
+        break; 
      
-     
-      case 'r':
-       digitalWrite(ena485,HIGH);
+    case 'r':
+         digitalWrite(ena485,HIGH);
         delay(50);
         Serial.println("retrocediendo paso normal");
-        Retroceder(Pasos,Vel);
+        RetrocederDosBobinas(Pasos,Vel);
         Detener();
         break;
-      case 'R':
+      
+    case 'R':
         digitalWrite(ena485,HIGH);
         delay(50);
         Serial.println("retrocediendo paso intercalado");
         RetrocederPasoIntermedio(Pasos,Vel);
         Detener();
         break;
-      default:
+    default:
         break;
    }  
  Serial.println("detenido");
@@ -143,6 +126,42 @@ void comandos(String com){
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
   }
+  
+   void RetrocederDosBobinas(int posiciones,int velocidad){
+    for(int i=0;i<posiciones;i++){
+       
+     
+        digitalWrite(L1,LOW);
+        digitalWrite(L2,LOW);
+        digitalWrite(L3,HIGH);
+        digitalWrite(L4,HIGH);
+        Serial.print(".");
+        delay(velocidad);
+  
+        digitalWrite(L1,LOW);
+        digitalWrite(L2,HIGH);
+        digitalWrite(L3,HIGH);
+        digitalWrite(L4,LOW);
+        Serial.print(".");
+        delay(velocidad);
+  
+        digitalWrite(L1,HIGH);
+        digitalWrite(L2,HIGH);
+        digitalWrite(L3,LOW);
+        digitalWrite(L4,LOW);
+        Serial.print(".");
+        delay(velocidad);
+  
+        digitalWrite(L1,HIGH);
+        digitalWrite(L2,LOW);
+        digitalWrite(L3,LOW);
+        digitalWrite(L4,HIGH);
+        Serial.println(".");
+        delay(velocidad);
+    }
+    }
+  
+  
   
   void Retroceder(int posiciones,int velocidad){
     for(int i=0;i<posiciones;i++){
@@ -282,6 +301,14 @@ void comandos(String com){
     void RetrocederPasoIntermedio(int posiciones,int velocidad){
     
       for(int i=0;i<posiciones;i++){
+        
+        digitalWrite(L1,HIGH);
+        digitalWrite(L2,LOW);
+        digitalWrite(L3,LOW);
+        digitalWrite(L4,HIGH);
+        Serial.println(".");
+        delay(velocidad);
+        
        
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
@@ -332,14 +359,55 @@ void comandos(String com){
         Serial.print(".");
         delay(velocidad);
         
-        digitalWrite(L1,HIGH);
-        digitalWrite(L2,LOW);
-        digitalWrite(L3,LOW);
-        digitalWrite(L4,HIGH);
-        Serial.println(".");
-        delay(velocidad);
-        
+       
     }
   
   
   }
+  
+   void AvanzarDeDosBobinas(int posiciones,int velocidad){
+    
+      for(int i=0;i<posiciones;i++){
+        
+        digitalWrite(L1,HIGH);
+        digitalWrite(L2,HIGH);
+        digitalWrite(L3,LOW);
+        digitalWrite(L4,LOW);
+        Serial.println(".");
+        delay(velocidad);
+             
+        digitalWrite(L1,LOW);
+        digitalWrite(L2,HIGH);
+        digitalWrite(L3,HIGH);
+        digitalWrite(L4,LOW);
+        Serial.print(".");
+        delay(velocidad);
+        
+        digitalWrite(L1,LOW);
+        digitalWrite(L2,LOW);
+        digitalWrite(L3,HIGH);
+        digitalWrite(L4,HIGH);
+        Serial.print(".");
+        delay(velocidad);
+        
+        digitalWrite(L1,HIGH);
+        digitalWrite(L2,LOW);
+        digitalWrite(L3,LOW);
+        digitalWrite(L4,HIGH);
+        Serial.print(".");
+        delay(velocidad);
+           
+       
+    }
+  
+  
+  }
+  
+  
+ void blink(){
+  
+
+  
+  }
+
+ 

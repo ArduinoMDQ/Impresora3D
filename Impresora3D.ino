@@ -1,6 +1,10 @@
 
 int L1=9,L2=10,L3=11,L4=12;
-int Vel=10,Pasos=70;
+int Vel=10,Pasos=30;
+int ContadorX=0;
+int ContadorY=0;
+int ContadorZ=0;
+
 
 int sensorPin = A0;
 int interruptPin=3;
@@ -11,7 +15,7 @@ int ena485=2;
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
-
+ boolean lop=true;
 void setup() {
   
   pinMode(L1, OUTPUT);
@@ -61,6 +65,10 @@ void serialEvent() {
     if (inChar == '\r') {
       stringComplete = true;
     }
+    if (inChar == '0') {
+      lop = false;
+    }
+    
   }
  
 }
@@ -77,9 +85,7 @@ void comandos(String com){
  
   
   switch (com_char) {
-     
     case 'a':
-     
         digitalWrite(ena485,HIGH);
         delay(50);
         Serial.println("avanzando paso normal");
@@ -96,7 +102,7 @@ void comandos(String com){
         break; 
      
     case 'r':
-         digitalWrite(ena485,HIGH);
+        digitalWrite(ena485,HIGH);
         delay(50);
         Serial.println("retrocediendo paso normal");
         RetrocederDosBobinas(Pasos,Vel);
@@ -110,10 +116,47 @@ void comandos(String com){
         RetrocederPasoIntermedio(Pasos,Vel);
         Detener();
         break;
+        
+     case 'l':
+          digitalWrite(ena485,HIGH);
+          delay(50);
+          Serial.println("Modo Loop");
+          lop=true;
+          while(lop){
+            digitalWrite(ena485,HIGH);
+            delay(25);
+            AvanzarDeDosBobinas(Pasos,Vel);
+            Detener();
+            RetrocederDosBobinas(Pasos,Vel);
+            Detener();
+            delay(25);
+            digitalWrite(ena485,LOW);
+            serialEvent();     
+        
+        }
+        break;
+              
+     case 'L':
+          digitalWrite(ena485,HIGH);
+          delay(50);
+          Serial.println("Modo Loop");
+          lop=true;
+          while(lop){
+            digitalWrite(ena485,HIGH);
+            delay(25);
+            AvanzarPasoIntermedio(Pasos,Vel);
+            Detener();
+            RetrocederPasoIntermedio(Pasos,Vel);
+            Detener();
+            delay(25);
+            digitalWrite(ena485,LOW);
+            serialEvent();     
+        }
+        break;
     default:
         break;
    }  
- Serial.println("detenido");
+ 
   delay(50);
   digitalWrite(ena485,LOW);
  
@@ -125,9 +168,11 @@ void comandos(String com){
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
+        Serial.println();
   }
   
    void RetrocederDosBobinas(int posiciones,int velocidad){
+     ContadorX=0;
     for(int i=0;i<posiciones;i++){
        
      
@@ -135,28 +180,32 @@ void comandos(String com){
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
   
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
   
         digitalWrite(L1,HIGH);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
   
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.println(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
     }
     }
@@ -164,6 +213,7 @@ void comandos(String com){
   
   
   void Retroceder(int posiciones,int velocidad){
+    ContadorX=0;
     for(int i=0;i<posiciones;i++){
        
      
@@ -171,62 +221,70 @@ void comandos(String com){
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
-  
+        
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
-  
+        
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
-  
+        
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.println(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
     }
     }
   
   void Avanzar(int posiciones,int velocidad){
-    
+    ContadorX=0;
       for(int i=0;i<posiciones;i++){
        
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.println(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
        }
   
@@ -234,63 +292,71 @@ void comandos(String com){
   }
   
    void AvanzarPasoIntermedio(int posiciones,int velocidad){
-    
+    ContadorX=0;
       for(int i=0;i<posiciones;i++){
        
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,HIGH);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");;
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.println(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
     }
@@ -299,14 +365,17 @@ void comandos(String com){
   }
   
     void RetrocederPasoIntermedio(int posiciones,int velocidad){
-    
+
+      ContadorX=0;
+   
       for(int i=0;i<posiciones;i++){
         
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.println(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
        
@@ -314,49 +383,56 @@ void comandos(String com){
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,HIGH);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
        
@@ -366,40 +442,41 @@ void comandos(String com){
   }
   
    void AvanzarDeDosBobinas(int posiciones,int velocidad){
-    
+    ContadorX=0;
       for(int i=0;i<posiciones;i++){
         
         digitalWrite(L1,HIGH);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,LOW);
         digitalWrite(L4,LOW);
-        Serial.println(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
              
         digitalWrite(L1,LOW);
         digitalWrite(L2,HIGH);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,LOW);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,LOW);
         digitalWrite(L2,LOW);
         digitalWrite(L3,HIGH);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
         
         digitalWrite(L1,HIGH);
         digitalWrite(L2,LOW);
         digitalWrite(L3,LOW);
         digitalWrite(L4,HIGH);
-        Serial.print(".");
+        ContadorX++;
+        Serial.print(ContadorX);Serial.print("\r");
         delay(velocidad);
-           
-       
-    }
-  
+    }  
   
   }
   
